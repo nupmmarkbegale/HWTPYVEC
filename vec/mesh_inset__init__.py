@@ -21,9 +21,9 @@
 bl_info = {
     "name": "Inset Polygon",
     "author": "Howard Trickey",
-    "version": (0, 3),
-    "blender": (2, 5, 7),
-    "api": 36147,
+    "version": (0, 9),
+    "blender": (2, 6, 5),
+    "api": 52851,
     "location": "View3D > Tools",
     "description": "Make an inset polygon inside selection.",
     "warning": "",
@@ -122,7 +122,7 @@ def do_inset(mesh, amount, height, region, as_percent):
     pitch = math.atan(height / amount)
     selfaces = []
     selface_indices = []
-    for face in mesh.faces:
+    for face in mesh.polygons:
         if face.select and not face.hide:
             selfaces.append(face)
             selface_indices.append(face.index)
@@ -166,8 +166,8 @@ def do_inset(mesh, amount, height, region, as_percent):
         # copy face attributes from old face that it was derived from
         bfi = blender_old_face_index[i]
         if bfi and 0 <= bfi < start_faces:
-            bfacenew = mesh.faces[start_faces + i]
-            bface = mesh.faces[bfi]
+            bfacenew = mesh.polygons[start_faces + i]
+            bface = mesh.polygons[bfi]
             bfacenew.material_index = bface.material_index
             bfacenew.use_smooth = bface.use_smooth
     mesh.update(calc_edges=True)
