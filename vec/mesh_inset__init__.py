@@ -21,14 +21,13 @@
 bl_info = {
     "name": "Inset Polygon",
     "author": "Howard Trickey",
-    "version": (0, 9),
-    "blender": (2, 6, 5),
-    "api": 52851,
-    "location": "View3D > Tools",
+    "version": (1, 0),
+    "blender": (2, 69, 9),
+    "location": "View3D > Toolbar",
     "description": "Make an inset polygon inside selection.",
     "warning": "",
     "wiki_url": \
-      "http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Modeling/Inset-Polygon",
+      "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Modeling/Inset-Polygon",
     "tracker_url": \
       "http://projects.blender.org/tracker/index.php?func=detail&aid=27290&group_id=153&atid=468",
     "category": "Mesh"}
@@ -43,6 +42,7 @@ else:
 
 import math
 import bpy
+import bmesh
 import mathutils
 from bpy.props import *
 
@@ -107,32 +107,30 @@ class Inset(bpy.types.Operator):
     def action(self, context):
         save_global_undo = bpy.context.user_preferences.edit.use_global_undo
         bpy.context.user_preferences.edit.use_global_undo = False
-        bpy.ops.object.mode_set(mode='OBJECT')
         obj = bpy.context.active_object
-        mesh = obj.data
-        do_inset(mesh, self.inset_amount, self.inset_height, self.region,
+        bm = bmesh.from_edit_mesh(obj.data)
+        do_inset(bm, self.inset_amount, self.inset_height, self.region,
             self.scale == 'PERCENT')
-        bpy.ops.object.mode_set(mode='EDIT')
         bpy.context.user_preferences.edit.use_global_undo = save_global_undo
 
 
-def do_inset(mesh, amount, height, region, as_percent):
+def do_inset(bm, amount, height, region, as_percent):
     if amount <= 0.0:
         return
     pitch = math.atan(height / amount)
     selfaces = []
     selface_indices = []
-    for face in mesh.polygons:
+    for face in bm.faces:
         if face.select and not face.hide:
             selfaces.append(face)
             selface_indices.append(face.index)
     m = geom.Model()
-    # if add all mesh.vertices, coord indices will line up
+    # if add all bm.verts, coord indices will line up
     # Note: not using Points.AddPoint which does dup elim
     # because then would have to map vertices in and out
-    m.points.pos = [v.co.to_tuple() for v in mesh.vertices]
+    m.points.pos = [v.co.to_tuple() for v in bm.verts]
     for f in selfaces:
-        m.faces.append(list(f.vertices))
+        m.faces.append([v.index for v in f.verts])
         m.face_data.append(f.index)
     orig_numv = len(m.points.pos)
     orig_numf = len(m.faces)
@@ -140,46 +138,25 @@ def do_inset(mesh, amount, height, region, as_percent):
     if len(m.faces) == orig_numf:
         # something went wrong with Bevel - just treat as no-op
         return
-    # blender_faces: newfaces but all 4-tuples and no 0
-    # in 4th position if a 4-sided poly
-    blender_faces = []
-    blender_old_face_index = []
+    # make new BMVerts; indices will line up properly if add in order
+    for i in range(orig_numv, len(m.points.pos)):
+        bm.verts.new(mathutils.Vector(m.points.pos[i]))
+    # make new BMFaces
     for i in range(orig_numf, len(m.faces)):
         f = m.faces[i]
-        if len(f) == 3:
-            blender_faces.append(list(f) + [0])
-            blender_old_face_index.append(m.face_data[i])
-        elif len(f) == 4:
-            if f[3] == 0:
-                blender_faces.append([f[3], f[0], f[1], f[2]])
-            else:
-                blender_faces.append(f)
-            blender_old_face_index.append(m.face_data[i])
-    num_new_vertices = len(m.points.pos) - orig_numv
-    mesh.vertices.add(num_new_vertices)
-    for i in range(orig_numv, len(m.points.pos)):
-        mesh.vertices[i].co = mathutils.Vector(m.points.pos[i])
-    start_faces = len(mesh.faces)
-    mesh.faces.add(len(blender_faces))
-    for i, newf in enumerate(blender_faces):
-        mesh.faces[start_faces + i].vertices_raw = newf
+        face_verts = [bm.verts[k] for k in f]
         # copy face attributes from old face that it was derived from
-        bfi = blender_old_face_index[i]
-        if bfi and 0 <= bfi < start_faces:
-            bfacenew = mesh.polygons[start_faces + i]
-            bface = mesh.polygons[bfi]
-            bfacenew.material_index = bface.material_index
-            bfacenew.use_smooth = bface.use_smooth
-    mesh.update(calc_edges=True)
+        bfi = m.face_data[i]
+        if bfi and 0 <= bfi < orig_numf:
+            newf = bm.faces.new(face_verts, bm.faces[bfi])
+        else:
+            newf = bm.faces.new(face_verts)
     # remove original faces
-    bpy.ops.object.mode_set(mode='EDIT')
     save_select_mode = bpy.context.tool_settings.mesh_select_mode
     bpy.context.tool_settings.mesh_select_mode = [False, False, True]
     bpy.ops.mesh.select_all(action='DESELECT')
-    bpy.ops.object.mode_set(mode='OBJECT')
     for fi in selface_indices:
-        mesh.faces[fi].select = True
-    bpy.ops.object.mode_set(mode='EDIT')
+        bm.faces[fi].select = True
     bpy.ops.mesh.delete(type='FACE')
     bpy.context.tool_settings.mesh_select_mode = save_select_mode
 

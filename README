@@ -3,9 +3,9 @@ Python Vector Art Utilities for 3d
 Blender Import AI and PDF Addon
 To install it: 
 
- * Make sure you have Blender 2.57 or later
+ * Make sure you have Blender 2.69 or later
  * Find your blender installation's addons directory
-   (something like 2.57/scripts/addons under wherever you installed blender)
+   (something like 2.69/scripts/addons under wherever you installed blender)
    and make an io_vector dir
  * Use the tobl to copy the required files to io_vector (and rename the init file);
    you'll need to edit the script to put the right destination in
@@ -33,6 +33,7 @@ To use it:
      horizontal that the bevel sides pitch up
 
 Version history:
+1.0: (2/11/14) Bumped version and blender version; faces -> polygon fix
 0.8: (4/20/11) CS5 Illustrator colors work better.
   Bevel now handles edge events (not simultaneous ones yet, though).
 0.7: (3/30/11) Added SVG support
@@ -55,7 +56,8 @@ Blender Inset Polygon Addon
 To install it:
  * Follow same instructions for import addon, except that the
    files go into directory called mesh_inset in addons
-0.1: (5/4/11) First version
+1.0: (2/11/14) Bumped version and blender version; converted to use bmesh
 0.2: (5/7/11) Made default amount .05 so it doesn't seem like the button
    does nothing; made softmax for amount 1 instead of 10, to make the
    slider less sensitive.  Added wiki and tracker links.
+0.1: (5/4/11) First version
