@@ -115,6 +115,9 @@ class VectorImporter(bpy.types.Operator):
     cap_back = BoolProperty(name="Cap back",
       description="Cap the back if extruding",
       default=False)
+    true_scale = BoolProperty(name="True Scale",
+      description="Use true scale, with 1 meter = 1 blender unit",
+      default=False)
     # some info display properties
     num_verts = IntProperty(name="Number of vertices",
       default=0)
@@ -128,6 +131,7 @@ class VectorImporter(bpy.types.Operator):
         box.prop(self, "filepath")
         box.prop(self, "smoothness")
         box.prop(self, "scale")
+        box.prop(self, "true_scale")
         box.prop(self, "subdiv_kind")
         box.prop(self, "filled_only")
         box.prop(self, "ignore_white")
@@ -149,7 +153,10 @@ class VectorImporter(bpy.types.Operator):
         if objname.find(".") > 0:
             objname = objname.split(".")[0]
         options = import_vecfile.ImportOptions()
-        options.scaled_side_target = self.scale
+        if self.true_scale:
+            options.scaled_side_target = 0.0
+        else:
+            options.scaled_side_target = self.scale
         options.quadrangulate = True
         options.extrude_depth = self.extrude_depth
         options.bevel_amount = self.bevel_amount
