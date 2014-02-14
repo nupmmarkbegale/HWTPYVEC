@@ -300,7 +300,8 @@ def _SetEvenLength(options, paths):
     for p in paths:
         for sp in p.subpaths:
             for seg in sp.segments:
-                for (x, y) in seg[1:]:
+                endi = 3 if seg[0] == 'A' else len(seg)
+                for (x, y) in seg[1:endi]:
                     minx = min(minx, x)
                     maxx = max(maxx, x)
                     miny = min(miny, y)
@@ -569,7 +570,7 @@ def ArcApprox(start, end, rad, xrot, large_arc, ccw, options):
     # to satisfy the smoothness options.
     if options.subdiv_kind == "EVEN":
         # arc_length = pi*d * fraction of circle represented by delta_theta
-        arc_length = delta_theta * (rx + ry) / 2.0
+        arc_length = abs(delta_theta * (rx + ry) / 2.0)
         numsegs = math.ceil(arc_length / options.even_length)
     else:
         # for smoothness 0, have 1 segment per quarter circle

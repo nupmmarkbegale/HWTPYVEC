@@ -15,9 +15,10 @@ To use it:
  * From Blender's File menu, select Import > Vector files (.ai, .pdf, .svg)
  * Select an Adobe Illustrator (any version should work) or PDF or SVG file
    that contains some shapes
- * Perhaps change some of the Import Options in the tool panel for this addon.  Current options:
+ * Perhaps change some of the Import Options in the file selector panel for this addon.  Current options:
    o Smoothness: the bigger the number, the closer the approximation to curves by line segments
    o Scale: the number of Blender units for the longest side of the converted art
+   o True Scale: if checked, ignore Scale and instead import with 1 blender unit = 1 meter in file
    o Subdivision:
      + Uniform: divide in half 'smoothness' times
      + Adaptive: like Uniform, but divide until curves are flat enough
@@ -33,7 +34,13 @@ To use it:
      horizontal that the bevel sides pitch up
 
 Version history:
-1.0: (2/11/14) Bumped version and blender version; faces -> polygon fix
+1.0: (2/14/14) Bumped version and blender version
+  Put options in file selector panel rather than tool bar.
+  Added 'True Scale' option to use document scale as is.
+  Fixed need to use polygons rather than faces.
+  Fixed crash and bug for 'Even' subdivision when arcs present
+  Updated tracker and wiki links
+  Changed support to community, as will add this into addons_contrib
 0.8: (4/20/11) CS5 Illustrator colors work better.
   Bevel now handles edge events (not simultaneous ones yet, though).
 0.7: (3/30/11) Added SVG support

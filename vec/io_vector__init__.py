@@ -23,13 +23,13 @@ bl_info = {
   "author": "Howard Trickey",
   "version": (1, 0),
   "blender": (2, 69, 9),
-  "location": "File > Import-Export > Adobe Illustrator/PDF/SVG ",
+  "location": "File > Import-Export > Vector files (.ai, .pdf, .svg)",
   "description": "Import Adobe Illustrator, PDF, and SVG",
   "warning": "",
   "wiki_url": \
-      "http://http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/AI_PDF_SVG",
-  "tracker_url": \
-      "http://http://projects.blender.org/tracker/index.php?func=detail&aid=27246",
+      "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/AI_PDF_SVG",
+  "tracker_url":  "https://developer.blender.org/T27246",
+  "support": "COMMUNITY",
   "category": "Import-Export"}
 
 if "bpy" in locals():
@@ -47,17 +47,17 @@ else:
 
 import math
 import bpy
+import bpy_extras.io_utils
 from bpy.props import *
+from bpy_extras.io_utils import ImportHelper
 
 
-class VectorImporter(bpy.types.Operator):
+class VectorImporter(bpy.types.Operator, ImportHelper):
     bl_idname = "import_vec.aipdfsvg"
     bl_label = "Import AI/PDF/SVG"
     bl_options = {"REGISTER", "UNDO"}
 
-    filepath = StringProperty(name="File Path",
-      description="Filepath used for importing the vector file",
-      maxlen=1024, default="", subtype="FILE_PATH")
+    filter_glob = StringProperty(default="*.ai;*.pdf;*.svg", options={"HIDDEN"})
     smoothness = IntProperty(name="Smoothness",
         description="How closely to approximate curves",
         default=1,
@@ -128,7 +128,6 @@ class VectorImporter(bpy.types.Operator):
         layout = self.layout
         box = layout.box()
         box.label("Import Options")
-        box.prop(self, "filepath")
         box.prop(self, "smoothness")
         box.prop(self, "scale")
         box.prop(self, "true_scale")
@@ -190,14 +189,6 @@ class VectorImporter(bpy.types.Operator):
     def execute(self, context):
         self.action(context)
         return {'FINISHED'}
-
-    def invoke(self, context, event):
-        self.action(context)
-        return {'FINISHED'}
-        # the modal way
-        #wm = context.window_manager
-        #wm.fileselect_add(self)
-        #return {'RUNNING_MODAL'}
 
 
 def add_colors(mesh, colors):

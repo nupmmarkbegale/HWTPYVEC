@@ -82,11 +82,7 @@ def _SVGDomToArt(dom):
     if len(svgs) == 0:
         return art
     gs = _SState()
-    # default coordinate system for svg has y downwards
-    # so start transform matrix to reverse that
-    # default units are in pixels; use dpi to convert to meters
-    gs.ctm.a = 0.0254 / gs.dpi
-    gs.ctm.d = -0.0254 / gs.dpi
+    gs.ctm.d = -1.0
     _ProcessChildren(svgs[0], art, gs)
     return art
 
