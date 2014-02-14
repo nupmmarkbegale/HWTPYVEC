@@ -65,7 +65,7 @@ class _SState(object):
         self.fill = "black"
         self.fillrule = "nonzero"
         self.stroke = "none"
-        self.dpi = 100
+        self.dpi = 90  # default Inkscape DPI
 
 
 def _SVGDomToArt(dom):
@@ -84,7 +84,9 @@ def _SVGDomToArt(dom):
     gs = _SState()
     # default coordinate system for svg has y downwards
     # so start transform matrix to reverse that
-    gs.ctm.d = -1.0
+    # default units are in pixels; use dpi to convert to meters
+    gs.ctm.a = 0.0254 / gs.dpi
+    gs.ctm.d = -0.0254 / gs.dpi
     _ProcessChildren(svgs[0], art, gs)
     return art
 
