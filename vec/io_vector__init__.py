@@ -29,7 +29,6 @@ bl_info = {
   "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
       "Scripts/Import-Export/AI_PDF_SVG",
   "tracker_url": "https://developer.blender.org/T27246",
-  "support": "COMMUNITY",
   "category": "Import-Export"}
 
 if "bpy" in locals():

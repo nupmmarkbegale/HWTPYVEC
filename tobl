@@ -1,6 +1,7 @@
 #!/bin/sh
 bladdons=../blender-git/build/bin/2.69/scripts/addons
-bliov=$bladdons/io_vector
+bladdonscontrib=../blender-git/build/bin/2.69/scripts/addons_contrib
+bliov=$bladdonscontrib/io_vector
 cp vec/io_vector__init__.py $bliov/__init__.py
 for f in geom.py model.py pdf.py triquad.py vecfile.py import_vecfile.py art2polyarea.py offset.py svg.py; do
   cp vec/$f $bliov
