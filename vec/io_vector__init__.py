@@ -172,6 +172,16 @@ class VectorImporter(bpy.types.Operator, ImportHelper):
                 "Problem reading file " + self.filepath + ": " + msg)
             return {'FINISHED'}
         verts = mdl.points.pos
+        if self.true_scale:
+            # assume model units are 90 dpi, if svg file
+            # else 72 dpi
+            # convert to meters (1 inch = 0.0254 meters)
+            if self.filepath[-4:] in (".svg", ".SVG"):
+                s = 0.0254 / 90.0
+                print("svg s=", s)
+            else:
+                s = 0.0254 / 72.0
+            verts = [(s * v[0], s * v[1], s * v[2]) for v in verts]
         faces = [f for f in mdl.faces if 3 <= len(f) <= 4]
         mesh = bpy.data.meshes.new(objname)
         mesh.from_pydata(verts, [], faces)
