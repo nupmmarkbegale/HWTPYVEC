@@ -1,4 +1,4 @@
-#!/usr/bin/python3.1
+#!/usr/bin/python3.2
 
 """This module tests the triangulate family of functions provided by triquad.py"""
 

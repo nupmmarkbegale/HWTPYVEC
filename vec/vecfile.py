@@ -170,7 +170,9 @@ def TokenizeAIEPSFile(filename):
         if WARN:
             print("Can't open file", filename)
         return []
-    return TokenizeAIEPS(f.read())
+    contents = f.read()
+    f.close()
+    return TokenizeAIEPS(contents)
 
 # Regular expressions for PostScript tokens
 _re_psname = re.compile(r"[^ \t\r\n()<>[\]{}/%]+")

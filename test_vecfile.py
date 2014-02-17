@@ -1,4 +1,4 @@
-#!/usr/bin/python3.1
+#!/usr/bin/python3.2
 # To run just one test in one TestCase, use a command line like:
 #    test_vecfile.py TestParseAIFile.testO
 
@@ -26,7 +26,7 @@ class TestClassifyEPS(unittest.TestCase):
         (ty,ver) = vecfile.ClassifyFile("testfiles/star.eps")
         self.assertEqual(ty, "eps")
         self.assertEqual(ver, "3.0")
-        (ty,ver) = vecfile.ClassifyFile("testfiles/ill/Illustratorfiles/11_04_Sketch&Toons_start 2.ai")
+        (ty,ver) = vecfile.ClassifyFile("testfiles/1.ai")
         self.assertEqual(ty, "ai")
         self.assertEqual(ver, "eps")
 

@@ -497,7 +497,9 @@ def ReadPDFPageOneContents(filename):
         if WARN:
             print("Can't open file", filename)
         return ''
-    return GetPDFPageOneContents(f.read())
+    contents = f.read()
+    f.close()
+    return GetPDFPageOneContents(contents)
 
 
 def GetPDFPageOneContents(s):
