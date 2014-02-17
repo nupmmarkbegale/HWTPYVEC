@@ -26,9 +26,9 @@ bl_info = {
   "location": "File > Import-Export > Vector files (.ai, .pdf, .svg)",
   "description": "Import Adobe Illustrator, PDF, and SVG",
   "warning": "",
-  "wiki_url": \
-      "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/AI_PDF_SVG",
-  "tracker_url":  "https://developer.blender.org/T27246",
+  "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+      "Scripts/Import-Export/AI_PDF_SVG",
+  "tracker_url": "https://developer.blender.org/T27246",
   "support": "COMMUNITY",
   "category": "Import-Export"}
 
@@ -48,7 +48,12 @@ else:
 import math
 import bpy
 import bpy_extras.io_utils
-from bpy.props import *
+from bpy.props import (BoolProperty,
+                       EnumProperty,
+                       FloatProperty,
+                       IntProperty,
+                       StringProperty
+                       )
 from bpy_extras.io_utils import ImportHelper
 
 

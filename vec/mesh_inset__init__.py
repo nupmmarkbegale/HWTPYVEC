@@ -23,14 +23,14 @@ bl_info = {
     "author": "Howard Trickey",
     "version": (1, 0),
     "blender": (2, 69, 9),
-    "location": "View3D > Toolbar",
+    "location": "View3D > Tools",
     "description": "Make an inset polygon inside selection.",
     "warning": "",
-    "wiki_url": \
-      "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Modeling/Inset-Polygon",
-    "tracker_url": \
-      "http://projects.blender.org/tracker/index.php?func=detail&aid=27290&group_id=153&atid=468",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+        "Scripts/Modeling/Inset-Polygon",
+    "tracker_url": "https://developer.blender.org/T27290",
     "category": "Mesh"}
+
 
 if "bpy" in locals():
     import imp
@@ -44,12 +44,15 @@ import math
 import bpy
 import bmesh
 import mathutils
-from bpy.props import *
+from bpy.props import (BoolProperty,
+                       EnumProperty,
+                       FloatProperty,
+                       )
 
 
 class Inset(bpy.types.Operator):
-    bl_idname = "mesh.inset"
-    bl_label = "Inset"
+    bl_idname = "mesh.insetpoly"
+    bl_label = "Inset Polygon"
     bl_description = "Make an inset polygon inside selection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -90,7 +93,7 @@ class Inset(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.label("Inset Options")
+        box.label("Inset Options:")
         box.prop(self, "scale")
         box.prop(self, "inset_amount")
         box.prop(self, "inset_height")
@@ -140,7 +143,7 @@ def do_inset(bm, amount, height, region, as_percent):
         return
     # make new BMVerts; indices will line up properly if add in order
     for i in range(orig_numv, len(m.points.pos)):
-        bm.verts.new(mathutils.Vector(m.points.pos[i]))
+        bm.verts.new(m.points.pos[i])
     # make new BMFaces
     for i in range(orig_numf, len(m.faces)):
         f = m.faces[i]
@@ -162,8 +165,8 @@ def do_inset(bm, amount, height, region, as_percent):
 
 
 def panel_func(self, context):
-    self.layout.label(text="Inset:")
-    self.layout.operator("mesh.inset", text="Inset")
+    self.layout.label(text="Inset Polygon:")
+    self.layout.operator("mesh.insetpoly", text="Inset")
 
 
 def register():
